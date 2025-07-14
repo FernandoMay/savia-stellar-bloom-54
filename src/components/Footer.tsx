@@ -1,6 +1,6 @@
 import { Heart, Shield, Mail, Phone, MapPin, Github, Twitter, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import saviaLogo from "@/assets/savia-logo.png";
+import saviaLogo from "@/assets/Savia_logo.svg";
 
 export function Footer() {
   return (
@@ -12,7 +12,7 @@ export function Footer() {
             <div className="flex items-center gap-3">
               <img src={saviaLogo} alt="Savia" className="h-10 w-auto filter brightness-0 invert" />
               <div>
-                <h3 className="text-xl font-bold">Savia</h3>
+                {/* <h3 className="text-xl font-bold">Savia</h3> */}
                 <p className="text-sm text-white/80">Donar con confianza</p>
               </div>
             </div>

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Heart, Wallet, User, Search } from "lucide-react";
-import saviaLogo from "@/assets/savia-logo.png";
+import saviaLogo from "@/assets/Savia_logo.svg";
 
 export function Navbar() {
   return (
