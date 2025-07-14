@@ -71,7 +71,7 @@ export const KYCVerification = () => {
 
   const handleSubmitMedicalKYC = () => {
     if (!kycData.medicalLicense || !kycData.institution) {
-      alert("Debe proporcionar cédula profesional e institución médica.");
+      alert("Debe proporcionar documento médico e institución médica.");
       return;
     }
 
@@ -108,7 +108,7 @@ export const KYCVerification = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="status">Estado KYC</TabsTrigger>
-            <TabsTrigger value="basic">KYC Básico</TabsTrigger>
+            <TabsTrigger value="basic">KYC Inicial</TabsTrigger>
             <TabsTrigger value="medical">KYC Médico</TabsTrigger>
           </TabsList>
 
@@ -314,7 +314,7 @@ export const KYCVerification = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="medicalLicense" className="text-brand-verde-titulo">Cédula Profesional *</Label>
+                      <Label htmlFor="medicalLicense" className="text-brand-verde-titulo">Documento Médico *</Label>
                       <Input
                         id="medicalLicense"
                         placeholder="1234567"
@@ -323,7 +323,7 @@ export const KYCVerification = () => {
                         className="border-brand-amarillo-trazo/30 focus:border-brand-verde-titulo"
                       />
                       <div className="text-xs text-brand-gris-savia">
-                        Número de cédula profesional emitida por la SEP
+                        Número de documento médico emitida por la SEP
                       </div>
                     </div>
 
