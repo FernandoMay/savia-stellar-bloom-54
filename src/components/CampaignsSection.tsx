@@ -32,7 +32,7 @@ const sampleCampaigns = [
     progressPercentage: 75,
     daysLeft: 15,
     verified: true,
-    image: "cancer.jpeg",
+    image: "/cancer.jpeg",
   },
   {
     id: "3",
@@ -77,7 +77,7 @@ const sampleCampaigns = [
     progressPercentage: 57,
     daysLeft: 20,
     verified: true,
-    image: "diabetes.jpeg",
+    image: "/diabetes.jpeg",
   },
   {
     id: "6",
