@@ -22,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/nft-dashboard" element={<Dashboard />} />
           <Route path="/kyc-verification" element={<CreateCampaign />} />
+          <Route path="/createreate-campaign" element={<CreateCampaign />} />
           <Route path="/donation-flow" element={<Donation />} />
           {/* <Route path="/create-campaign" element={<StellarNFTDashboard />} /> */}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

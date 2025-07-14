@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heart, Shield, Zap, Coins } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function HeroSection() {
+  const navigate = useNavigate();
   return (
     <section className="relative overflow-hidden bg-gradient-mint py-20 lg:py-32">
       {/* Background decorative elements */}
@@ -57,11 +59,14 @@ export function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6">
+            <a href="/#campaigns">
+            
             <Button variant="hero" size="xl" className="w-full sm:w-auto min-w-48">
               <Heart className="w-5 h-5" />
               Explorar Campañas
             </Button>
-            <Button variant="mint" size="xl" className="w-full sm:w-auto min-w-48">
+            </a>
+            <Button variant="mint" size="xl" className="w-full sm:w-auto min-w-48" onClick={() => navigate("/create-campaign")}>
               Crear mi Campaña
             </Button>
           </div>
