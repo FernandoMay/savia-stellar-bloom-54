@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { MapPin, Shield, Clock, Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface CampaignCardProps {
   id: string;
@@ -34,6 +35,7 @@ export function CampaignCard({
   verified,
   image,
 }: CampaignCardProps) {
+  const navigate = useNavigate();
   return (
     <Card className="w-full max-w-lg bg-gradient-card shadow-card hover:shadow-elegant transition-all duration-300 border-0 rounded-3xl overflow-hidden group hover:scale-[1.02]">
       {/* Campaign Image */}
@@ -129,7 +131,7 @@ export function CampaignCard({
 
         {/* Action buttons */}
         <div className="flex gap-3 pt-2">
-          <Button variant="donate" className="flex-1 rounded-full">
+          <Button variant="donate" className="flex-1 rounded-full" onClick={() => navigate("/donation-flow")}>
             <Heart className="w-4 h-4" />
             Donar
           </Button>
