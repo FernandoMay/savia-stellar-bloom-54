@@ -658,13 +658,13 @@ const StellarNFTDashboard = () => {
                 placeholder="Enter amount ($)"
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               />
-              <button
+              <Button
                 onClick={handleDonation}
                 disabled={isMinting}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                variant="donate" className="flex-1 rounded-full"
               >
                 {isMinting ? 'Processing...' : 'Donate'}
-              </button>
+              </Button>
             </div>
           </Card>
         )}
