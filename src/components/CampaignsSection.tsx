@@ -32,7 +32,7 @@ const sampleCampaigns = [
     progressPercentage: 75,
     daysLeft: 15,
     verified: true,
-    image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop&crop=center",
+    image: "public/cancer.jpeg",
   },
   {
     id: "3",
