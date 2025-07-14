@@ -77,7 +77,7 @@ const sampleCampaigns = [
     progressPercentage: 57,
     daysLeft: 20,
     verified: true,
-    image: "diabetes.jpeg",
+    image: "public/diabetes.jpeg",
   },
   {
     id: "6",
