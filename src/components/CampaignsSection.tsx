@@ -77,7 +77,7 @@ const sampleCampaigns = [
     progressPercentage: 57,
     daysLeft: 20,
     verified: true,
-    image: "https://images.unsplash.com/photo-1559757175-0eb31098c192?w=400&h=300&fit=crop&crop=center",
+    image: "src/assets/diabetes.jpeg",
   },
   {
     id: "6",
