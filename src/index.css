@@ -15,8 +15,9 @@ All colors MUST be HSL.
     /* New Brand Colors */
     --verde-titulo: 185 35% 46%;   /* #458985 */
     --gris-savia: 181 8% 49%;     /* #6E8485 */
-    --amarillo-relleno: 51 79% 94%; /* #FEF6DA */
-    --amarillo-trazo: 48 100% 78%;  /* #FFE792 */
+    --amarillo-relleno: 30 100% 98%; /*31 49% 91%; /*30 67% 99%; /*25.45 13.2% 98.04%; /*51 79% 94%; /* #FEF6DA */
+    --amarillo-trazo: 163 40% 90%; /*174.2 37% 78%;  /* #FFE792 */
+    /* --savia-peach: 30 67% 99%; */
     
     /* Gradient Colors */
     --verde-gradient: 162 100% 95%;   /* #E4FFF6 */

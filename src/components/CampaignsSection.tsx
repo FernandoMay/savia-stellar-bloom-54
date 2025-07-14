@@ -141,7 +141,7 @@ export function CampaignsSection() {
             <input
               type="text"
               placeholder="Buscar por ubicación o condición médica..."
-              className="w-full pl-10 pr-4 py-3 rounded-full border border-brand-amarillo-trazo/30 bg-card focus:outline-none focus:ring-2 focus:ring-brand-verde-titulo/20 focus:border-brand-verde-titulo"
+              className="w-full pl-10 pr-4 py-3 rounded-full border border-brand-amarillo-trazo/10 bg-card/70 focus:outline-none focus:ring-2 focus:ring-brand-verde-titulo/20 focus:border-brand-verde-titulo"
             />
           </div>
         </div>
