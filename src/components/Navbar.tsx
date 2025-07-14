@@ -11,10 +11,10 @@ export function Navbar() {
           <div className="flex items-center gap-3">
             <img src={saviaLogo} alt="Savia" className="h-8 w-auto" />
             <div className="hidden md:block">
-              <h1 className="text-xl font-bold text-savia-teal">Savia</h1>
-              <p className="text-xs text-muted-foreground -mt-1">
+              {/* <h1 className="text-xl font-bold text-savia-teal">Savia</h1> */}
+              {/* <p className="text-xs text-muted-foreground -mt-1">
                 Donar con confianza
-              </p>
+              </p> */}
             </div>
           </div>
 

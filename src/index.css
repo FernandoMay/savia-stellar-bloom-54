@@ -17,6 +17,10 @@ All colors MUST be HSL.
     --gris-savia: 181 8% 49%;     /* #6E8485 */
     --amarillo-relleno: 51 79% 94%; /* #FEF6DA */
     --amarillo-trazo: 48 100% 78%;  /* #FFE792 */
+    --savia-coral: 9 100% 70%;
+
+    --savia-teal: 186 37% 47%;
+    --savia-cream: 60 100% 97%;
     
     /* Gradient Colors */
     --verde-gradient: 162 100% 95%;   /* #E4FFF6 */
@@ -54,7 +58,8 @@ All colors MUST be HSL.
 
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(var(--verde-titulo)), hsl(var(--savia-verde)));
-    --gradient-card: linear-gradient(145deg, hsl(var(--amarillo-relleno)), hsl(var(--amarillo-trazo)));
+    --gradient-card: linear-gradient(145deg, hsl(60 100% 97%), hsl(60 100% 95%));
+    /* --gradient-card: linear-gradient(145deg, hsl(var(--amarillo-relleno)), hsl(var(--amarillo-trazo))); */
     --gradient-mint: linear-gradient(180deg, hsl(var(--verde-gradient)), hsl(160 100% 96%)); /* Slightly lighter version of verde-gradient */
     --gradient-savia: linear-gradient(135deg, hsl(var(--verde-gradient)), hsl(var(--amarillo-gradient)));
     
