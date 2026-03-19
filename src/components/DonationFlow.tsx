@@ -172,7 +172,7 @@ export const DonationFlow = () => {
           <Card className="mb-6 p-4 shadow-card border-0 bg-primary/5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                 <span className="text-sm font-mono text-muted-foreground">
                   {wallet.address.slice(0, 8)}...{wallet.address.slice(-4)}
                 </span>
