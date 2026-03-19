@@ -91,7 +91,7 @@ export function Footer() {
         <div className="border-t border-white/20 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-white/80 text-sm">
-              © 2024 Savia. Todos los derechos reservados.
+              © {new Date().getFullYear()} Savia. Todos los derechos reservados.
             </p>
             <div className="flex items-center gap-4 text-sm text-white/80">
               <span className="flex items-center gap-1">

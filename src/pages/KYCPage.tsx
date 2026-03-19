@@ -1,15 +1,15 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { CreateCampaignForm } from "@/components/CreateCampaignForm";
+import { KYCVerification } from "@/components/KYCVerification";
 
-const CreateCampaign = () => {
+const KYCPage = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <CreateCampaignForm />
+      <KYCVerification />
       <Footer />
     </div>
   );
 };
 
-export default CreateCampaign;
+export default KYCPage;

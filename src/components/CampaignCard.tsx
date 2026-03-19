@@ -131,11 +131,11 @@ export function CampaignCard({
 
         {/* Action buttons */}
         <div className="flex gap-3 pt-2">
-          <Button variant="donate" className="flex-1 rounded-full" onClick={() => navigate("/nft-dashboard")}>
+          <Button variant="donate" className="flex-1 rounded-full" onClick={() => navigate("/donation-flow")}>
             <Heart className="w-4 h-4" />
             Donar
           </Button>
-          <Button variant="mint" className="flex-1 rounded-full">
+          <Button variant="mint" className="flex-1 rounded-full" onClick={() => navigate("/donation-flow")}>
             Ver Detalles
           </Button>
         </div>
