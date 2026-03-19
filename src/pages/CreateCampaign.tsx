@@ -1,16 +1,12 @@
 import { Navbar } from "@/components/Navbar";
-import { HeroSection } from "@/components/HeroSection";
-import { CampaignsSection } from "@/components/CampaignsSection";
-import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { Footer } from "@/components/Footer";
-import StellarNFTDashboard from "@/components/NFTDashboard";
-import { KYCVerification } from "@/components/KYCVerification";
+import { CreateCampaignForm } from "@/components/CreateCampaignForm";
 
 const CreateCampaign = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <KYCVerification/>
+      <CreateCampaignForm />
       <Footer />
     </div>
   );
