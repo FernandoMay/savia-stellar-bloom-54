@@ -7,8 +7,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import CreateCampaign from "./pages/CreateCampaign";
-import { DonationFlow } from "./components/DonationFlow";
 import Donation from "./pages/Donation";
+import KYCPage from "./pages/KYCPage";
 
 const queryClient = new QueryClient();
 
@@ -21,11 +21,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/nft-dashboard" element={<Dashboard />} />
-          <Route path="/kyc-verification" element={<CreateCampaign />} />
           <Route path="/create-campaign" element={<CreateCampaign />} />
           <Route path="/donation-flow" element={<Donation />} />
-          {/* <Route path="/create-campaign" element={<StellarNFTDashboard />} /> */}
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/kyc-verification" element={<KYCPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
