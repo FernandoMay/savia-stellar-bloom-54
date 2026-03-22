@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { CampaignProvider } from "@/context/CampaignContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
@@ -15,18 +16,21 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/nft-dashboard" element={<Dashboard />} />
-          <Route path="/create-campaign" element={<CreateCampaign />} />
-          <Route path="/donation-flow" element={<Donation />} />
-          <Route path="/kyc-verification" element={<KYCPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <CampaignProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/nft-dashboard" element={<Dashboard />} />
+            <Route path="/create-campaign" element={<CreateCampaign />} />
+            <Route path="/donation-flow" element={<Donation />} />
+            <Route path="/donation-flow/:campaignId" element={<Donation />} />
+            <Route path="/kyc-verification" element={<KYCPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </CampaignProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
