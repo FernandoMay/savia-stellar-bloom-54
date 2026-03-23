@@ -6,22 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
-import { TreePine, Heart, DollarSign, Shield, Star, Info, CheckCircle, Wallet, ExternalLink } from "lucide-react";
+import { Leaf, Heart, DollarSign, Shield, Star, Info, CheckCircle, Wallet, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useStellarWallet } from "@/hooks/use-stellar-wallet";
 import { useCampaigns } from "@/context/CampaignContext";
 import { sendDonationPayment } from "@/lib/stellar/soroban";
 import { STELLAR_CONFIG } from "@/lib/stellar/config";
+import { nftStages, getStageForXLM, getNextStageForXLM } from "@/lib/stellar/nft-stages";
 import { toast } from "@/components/ui/sonner";
-
-interface TreeStage {
-  name: string;
-  minPesos: number;
-  maxPesos: number;
-  icon: string;
-  description: string;
-}
 
 export const DonationFlow = () => {
   const { campaignId } = useParams<{ campaignId: string }>();
