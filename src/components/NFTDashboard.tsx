@@ -1,482 +1,248 @@
-import React, { useState, useEffect } from 'react';
-import { Wallet, Leaf, Gift, TrendingUp, Star, Trophy, Crown, Diamond, Download, RefreshCw, ExternalLink, LogOut, Coins } from 'lucide-react';
+import React from 'react';
+import { Wallet, Leaf, ExternalLink, LogOut, Coins, RefreshCw, Lock, Trophy, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useStellarWallet } from '@/hooks/use-stellar-wallet';
-import { mintNFTOnSoroban } from '@/lib/stellar/soroban';
+import { useCampaigns } from '@/context/CampaignContext';
 import { STELLAR_CONFIG } from '@/lib/stellar/config';
-import type { NFTRecord } from '@/lib/stellar/types';
-import { nftStages } from '@/lib/stellar/nft-stages';
-import { toast } from '@/components/ui/sonner';
-
-const stageIcons = [
-  <Leaf className="w-5 h-5" />,
-  <Gift className="w-5 h-5" />,
-  <TrendingUp className="w-5 h-5" />,
-  <Star className="w-5 h-5" />,
-  <Trophy className="w-5 h-5" />,
-  <Crown className="w-5 h-5" />,
-  <Diamond className="w-5 h-5" />,
-];
+import { nftStages, getStageForXLM, getNextStageForXLM } from '@/lib/stellar/nft-stages';
+import { useNavigate } from 'react-router-dom';
 
 const StellarNFTDashboard = () => {
-  const {
-    wallet,
-    balance,
-    isConnecting,
-    isFreighterAvailable,
-    connect,
-    disconnect,
-    refreshBalance,
-  } = useStellarWallet();
+  const { wallet, balance, isConnecting, isFreighterAvailable, connect, disconnect, refreshBalance } = useStellarWallet();
+  const { donations } = useCampaigns();
+  const navigate = useNavigate();
 
-  const [totalDonations, setTotalDonations] = useState(0);
-  const [currentStage, setCurrentStage] = useState(0);
-  const [nftCollection, setNftCollection] = useState<NFTRecord[]>([]);
-  const [donationAmount, setDonationAmount] = useState('');
-  const [isMinting, setIsMinting] = useState(false);
+  const truncateAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
-  // Calculate current stage based on donations
-  useEffect(() => {
-    const newStage = nftStages.reduce((prev, curr) => {
-      return totalDonations >= curr.threshold ? curr.id : prev;
-    }, 0);
-    setCurrentStage(newStage);
-  }, [totalDonations]);
+  // Not connected state
+  if (!wallet) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-lg mx-auto text-center space-y-6">
+          <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+            <Lock className="w-10 h-10 text-primary" />
+          </div>
+          <h1 className="text-3xl font-bold text-foreground">Mis Insignias NFT</h1>
+          <p className="text-muted-foreground">
+            Conecta tu wallet Freighter para ver las insignias que has ganado al donar en campañas de Savia.
+          </p>
+          <Button onClick={connect} disabled={isConnecting} variant="donate" className="rounded-full px-8">
+            <Wallet className="w-4 h-4 mr-2" />
+            {isConnecting ? 'Conectando...' : isFreighterAvailable ? 'Conectar Freighter' : 'Instala Freighter'}
+          </Button>
+          {!isFreighterAvailable && (
+            <p className="text-xs text-muted-foreground">
+              Descarga Freighter en{' '}
+              <a href="https://freighter.app" target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                freighter.app
+              </a>
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Connected — calculate user stats
+  const pesoRate = 18.0;
+  const userDonations = donations.filter(d => d.donor === wallet.address);
+  const totalDonatedMXN = userDonations.reduce((sum, d) => sum + d.amountMXN, 0);
+  const totalDonatedXLM = totalDonatedMXN / pesoRate;
+  const currentStage = getStageForXLM(totalDonatedXLM);
+  const nextStage = getNextStageForXLM(totalDonatedXLM);
+  const unlockedStages = nftStages.filter(s => totalDonatedXLM >= s.threshold);
+  const lockedStages = nftStages.filter(s => totalDonatedXLM < s.threshold);
 
   const getProgressToNext = () => {
-    const nextStage = nftStages[currentStage + 1];
     if (!nextStage) return 100;
-    const currentThreshold = nftStages[currentStage].threshold;
-    const progress =
-      ((totalDonations - currentThreshold) /
-        (nextStage.threshold - currentThreshold)) *
-      100;
-    return Math.min(Math.max(progress, 0), 100);
+    const currentThreshold = currentStage.threshold;
+    return Math.min(((totalDonatedXLM - currentThreshold) / (nextStage.threshold - currentThreshold)) * 100, 100);
   };
-
-  const handleDonation = async () => {
-    if (!wallet || !donationAmount) return;
-
-    const amount = parseFloat(donationAmount);
-    if (amount <= 0) {
-      toast.error('Ingresa una cantidad válida');
-      return;
-    }
-
-    try {
-      setIsMinting(true);
-
-      const newTotal = totalDonations + amount;
-      const newStage = nftStages.reduce((prev, curr) => {
-        return newTotal >= curr.threshold ? curr.id : prev;
-      }, 0);
-
-      // If reached a new stage, mint NFT
-      if (newStage > currentStage) {
-        toast.info(`Minteando NFT ${nftStages[newStage].name}...`);
-
-        const result = await mintNFTOnSoroban(
-          wallet.address,
-          nftStages[newStage],
-          amount
-        );
-
-        if (result.success) {
-          const nftRecord: NFTRecord = {
-            tokenId: `SAVIA_${newStage}_${Date.now()}`,
-            owner: wallet.address,
-            stage: newStage,
-            metadata: {
-              name: `${STELLAR_CONFIG.APP_NAME} ${nftStages[newStage].name}`,
-              description: nftStages[newStage].description,
-              image: nftStages[newStage].imageUrl,
-              ipfs_hash: nftStages[newStage].ipfsHash,
-              external_url: `${window.location.origin}/nft/${newStage}`,
-              attributes: [
-                { trait_type: 'Growth Stage', value: nftStages[newStage].name },
-                { trait_type: 'Rarity', value: nftStages[newStage].attributes.rarity },
-              ],
-              properties: {
-                category: 'Dynamic Growth NFT',
-                collection: STELLAR_CONFIG.APP_NAME,
-                network: STELLAR_CONFIG.NETWORK,
-                contract: STELLAR_CONFIG.CONTRACT_ID,
-              },
-            },
-            transactionHash: result.hash,
-            mintedAt: new Date().toISOString(),
-            donationAmount: amount,
-          };
-
-          setNftCollection((prev) => [...prev, nftRecord]);
-          toast.success(
-            `🎉 ¡Desbloqueaste el NFT ${nftStages[newStage].name}!`
-          );
-        }
-      } else {
-        toast.success('¡Donación registrada exitosamente!');
-      }
-
-      setTotalDonations(newTotal);
-      setDonationAmount('');
-
-      // Refresh balance
-      if (refreshBalance) {
-        await refreshBalance();
-      }
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : 'Error desconocido';
-      toast.error(`Error: ${message}`);
-    } finally {
-      setIsMinting(false);
-    }
-  };
-
-  const downloadNFT = async (nft: NFTRecord) => {
-    try {
-      const response = await fetch(nft.metadata.image);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${nft.metadata.name}.png`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-      toast.success('NFT descargado');
-    } catch {
-      toast.error('Error al descargar NFT');
-    }
-  };
-
-  const truncateAddress = (addr: string) =>
-    `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
-        <div className="text-center space-y-3">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-            {STELLAR_CONFIG.APP_NAME} — NFT Dinámico
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Observa cómo crece tu impacto con cada donación en la red Stellar
-          </p>
-          <div className="flex items-center justify-center gap-3 text-sm text-muted-foreground">
-            <Badge variant="outline" className="font-mono text-xs">
-              {STELLAR_CONFIG.NETWORK.toUpperCase()}
-            </Badge>
-            <span className="font-mono">
-              {STELLAR_CONFIG.CONTRACT_ID.slice(0, 8)}...
-            </span>
-          </div>
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground">Mis Insignias NFT</h1>
+          <p className="text-muted-foreground">Tu colección de impacto en la blockchain de Stellar</p>
         </div>
 
-        {/* Wallet Connection */}
-        <Card className="p-6 shadow-card border-0 bg-card/80 backdrop-blur-sm">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-full bg-primary/10">
-                <Wallet className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-card-foreground">
-                  Stellar Wallet
-                </h3>
-                {wallet ? (
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground font-mono">
-                      {truncateAddress(wallet.address)}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <Coins className="w-3 h-3 text-muted-foreground" />
-                      <span className="text-sm font-medium text-card-foreground">
-                        {parseFloat(balance).toFixed(2)} XLM
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    {isFreighterAvailable
-                      ? 'Conecta tu wallet Freighter para comenzar'
-                      : 'Instala Freighter desde freighter.app'}
-                  </p>
-                )}
-              </div>
+        {/* Wallet Info Bar */}
+        <Card className="p-4 shadow-card border-0 bg-card/80 backdrop-blur-sm">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="text-sm font-mono text-muted-foreground">{truncateAddress(wallet.address)}</span>
+              <Badge variant="outline" className="text-xs font-mono">
+                <Coins className="w-3 h-3 mr-1" />
+                {parseFloat(balance).toFixed(2)} XLM
+              </Badge>
+              <Badge variant="secondary" className="text-xs">{STELLAR_CONFIG.NETWORK.toUpperCase()}</Badge>
             </div>
-
-            <div className="flex gap-2 w-full sm:w-auto">
-              {wallet ? (
-                <>
-                  <Button
-                    onClick={refreshBalance}
-                    variant="mint"
-                    size="sm"
-                    className="rounded-full"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                  </Button>
-                  <a
-                    href={`https://stellar.expert/explorer/testnet/account/${wallet.address}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button variant="outline" size="sm" className="rounded-full">
-                      <ExternalLink className="w-4 h-4" />
-                    </Button>
-                  </a>
-                  <Button
-                    onClick={disconnect}
-                    variant="ghost"
-                    size="sm"
-                    className="rounded-full text-destructive"
-                  >
-                    <LogOut className="w-4 h-4" />
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  onClick={connect}
-                  disabled={isConnecting}
-                  variant="donate"
-                  className="rounded-full w-full sm:w-auto"
-                >
-                  <Wallet className="w-4 h-4 mr-2" />
-                  {isConnecting ? 'Conectando...' : 'Conectar Freighter'}
-                </Button>
-              )}
+            <div className="flex gap-2">
+              <Button onClick={refreshBalance} variant="ghost" size="sm" className="rounded-full">
+                <RefreshCw className="w-4 h-4" />
+              </Button>
+              <a href={`https://stellar.expert/explorer/testnet/account/${wallet.address}`} target="_blank" rel="noopener noreferrer">
+                <Button variant="ghost" size="sm" className="rounded-full"><ExternalLink className="w-4 h-4" /></Button>
+              </a>
+              <Button onClick={disconnect} variant="ghost" size="sm" className="rounded-full text-destructive">
+                <LogOut className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </Card>
 
-        {/* Current Stage Display */}
-        <Card className="p-6 shadow-card border-0 bg-card/80 backdrop-blur-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-card-foreground">
-              Etapa Actual de Crecimiento
-            </h2>
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">Total Donado</p>
-              <p className="text-2xl font-bold text-card-foreground">
-                ${totalDonations}
-              </p>
-            </div>
-          </div>
+        {/* Stats Summary */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Card className="p-4 text-center border-0 shadow-card bg-card/80">
+            <p className="text-2xl font-bold text-foreground">{userDonations.length}</p>
+            <p className="text-xs text-muted-foreground">Donaciones</p>
+          </Card>
+          <Card className="p-4 text-center border-0 shadow-card bg-card/80">
+            <p className="text-2xl font-bold text-foreground">${totalDonatedMXN.toFixed(0)}</p>
+            <p className="text-xs text-muted-foreground">MXN Donados</p>
+          </Card>
+          <Card className="p-4 text-center border-0 shadow-card bg-card/80">
+            <p className="text-2xl font-bold text-foreground">{unlockedStages.length}</p>
+            <p className="text-xs text-muted-foreground">Insignias</p>
+          </Card>
+          <Card className="p-4 text-center border-0 shadow-card bg-card/80">
+            <p className="text-2xl font-bold text-foreground capitalize">{currentStage.attributes.rarity}</p>
+            <p className="text-xs text-muted-foreground">Rango Actual</p>
+          </Card>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div
-                  className={`p-3 rounded-full text-white ${nftStages[currentStage].color}`}
-                >
-                  {stageIcons[currentStage]}
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-card-foreground">
-                    {nftStages[currentStage].name}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">
-                    {nftStages[currentStage].description}
-                  </p>
-                </div>
-              </div>
-
-              <Badge
-                variant="secondary"
-                className="capitalize"
-              >
-                {nftStages[currentStage].attributes.rarity}
-              </Badge>
-
-              {currentStage < nftStages.length - 1 && (
-                <div className="space-y-2">
+        {/* Current Stage Hero */}
+        <Card className="overflow-hidden border-0 shadow-elegant bg-card/80 backdrop-blur-sm">
+          <div className="grid md:grid-cols-2">
+            <div className="p-8 flex flex-col justify-center space-y-4">
+              <Badge variant="secondary" className="w-fit capitalize">{currentStage.attributes.rarity}</Badge>
+              <h2 className="text-2xl font-bold text-card-foreground">{currentStage.name}</h2>
+              <p className="text-muted-foreground">{currentStage.description}</p>
+              {nextStage && (
+                <div className="space-y-2 pt-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      Progreso a {nftStages[currentStage + 1].name}
-                    </span>
-                    <span className="text-card-foreground font-medium">
-                      ${totalDonations} / ${nftStages[currentStage + 1].threshold}
-                    </span>
+                    <span className="text-muted-foreground">Próxima: {nextStage.name}</span>
+                    <span className="text-card-foreground font-medium">{totalDonatedXLM.toFixed(1)} / {nextStage.threshold} XLM</span>
                   </div>
                   <Progress value={getProgressToNext()} className="h-2" />
                 </div>
               )}
+              {nextStage && (
+                <Button variant="donate" className="rounded-full w-fit" onClick={() => navigate('/')}>
+                  <Leaf className="w-4 h-4 mr-2" /> Donar para subir de nivel
+                </Button>
+              )}
             </div>
-
-            <div className="flex justify-center">
+            <div className="flex items-center justify-center p-8 bg-primary/5">
               <img
-                src={nftStages[currentStage].imageUrl}
-                alt={nftStages[currentStage].name}
-                className="w-48 h-48 rounded-lg shadow-elegant object-cover"
+                src={currentStage.imageUrl}
+                alt={currentStage.name}
+                className="w-48 h-48 rounded-2xl shadow-elegant object-cover"
                 loading="lazy"
               />
             </div>
           </div>
         </Card>
 
-        {/* Donation Interface */}
-        {wallet && (
-          <Card className="p-6 shadow-card border-0 bg-card/80 backdrop-blur-sm">
-            <h2 className="text-xl font-bold text-card-foreground mb-4">
-              Hacer una Donación
+        {/* Unlocked Badges */}
+        {unlockedStages.length > 0 && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-primary" /> Insignias Desbloqueadas
             </h2>
-            <div className="space-y-4">
-              <div className="grid grid-cols-4 gap-2">
-                {[5, 10, 25, 50].map((amt) => (
-                  <Button
-                    key={amt}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setDonationAmount(amt.toString())}
-                    className="rounded-full"
-                  >
-                    ${amt}
-                  </Button>
-                ))}
-              </div>
-              <div className="flex gap-3">
-                <input
-                  type="number"
-                  value={donationAmount}
-                  onChange={(e) => setDonationAmount(e.target.value)}
-                  placeholder="Cantidad personalizada ($)"
-                  className="flex-1 px-4 py-2 rounded-full border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-                <Button
-                  onClick={handleDonation}
-                  disabled={isMinting || !donationAmount}
-                  variant="donate"
-                  className="rounded-full px-6"
-                >
-                  {isMinting ? 'Procesando...' : 'Donar'}
-                </Button>
-              </div>
-              {donationAmount && parseFloat(donationAmount) > 0 && (
-                <p className="text-xs text-muted-foreground text-center">
-                  Al donar, se interactúa con el contrato inteligente en Stellar {STELLAR_CONFIG.NETWORK}
-                </p>
-              )}
-            </div>
-          </Card>
-        )}
-
-        {/* NFT Collection */}
-        {nftCollection.length > 0 && (
-          <Card className="p-6 shadow-card border-0 bg-card/80 backdrop-blur-sm">
-            <h2 className="text-xl font-bold text-card-foreground mb-4">
-              Tu Colección de NFTs
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {nftCollection.map((nft, index) => (
-                <Card
-                  key={index}
-                  className="overflow-hidden border shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1"
-                >
-                  <img
-                    src={nft.metadata.image}
-                    alt={nft.metadata.name}
-                    className="w-full h-36 object-cover"
-                    loading="lazy"
-                  />
-                  <div className="p-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`p-1.5 rounded-full text-white ${nftStages[nft.stage].color}`}
-                        >
-                          {stageIcons[nft.stage]}
-                        </div>
-                        <h3 className="font-semibold text-card-foreground text-sm">
-                          {nft.metadata.name}
-                        </h3>
-                      </div>
-                      <button
-                        onClick={() => downloadNFT(nft)}
-                        className="p-1.5 text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        <Download className="w-4 h-4" />
-                      </button>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {unlockedStages.map(stage => (
+                <Card key={stage.id} className="overflow-hidden border-0 shadow-card hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 bg-card/90">
+                  <div className="aspect-square relative">
+                    <img src={stage.imageUrl} alt={stage.name} className="w-full h-full object-cover" loading="lazy" />
+                    <div className="absolute top-2 right-2">
+                      <Badge variant="secondary" className="text-[10px] capitalize backdrop-blur-sm">{stage.attributes.rarity}</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {nft.metadata.description}
-                    </p>
-                    <div className="text-xs text-muted-foreground space-y-0.5 font-mono">
-                      <p>TX: {nft.transactionHash.slice(0, 16)}...</p>
-                      <p>{new Date(nft.mintedAt).toLocaleDateString('es-MX')}</p>
-                    </div>
+                  </div>
+                  <div className="p-3 space-y-1">
+                    <h3 className="font-semibold text-card-foreground text-sm">{stage.name}</h3>
+                    <p className="text-[11px] text-muted-foreground line-clamp-2">{stage.description}</p>
+                    <p className="text-[10px] font-mono text-muted-foreground">{stage.threshold}+ XLM</p>
                   </div>
                 </Card>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Locked Badges */}
+        {lockedStages.length > 0 && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <Award className="w-5 h-5 text-muted-foreground" /> Por Desbloquear
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {lockedStages.map(stage => (
+                <Card key={stage.id} className="overflow-hidden border-0 shadow-card opacity-60 bg-card/60">
+                  <div className="aspect-square relative">
+                    <img src={stage.imageUrl} alt={stage.name} className="w-full h-full object-cover grayscale" loading="lazy" />
+                    <div className="absolute inset-0 bg-foreground/20 flex items-center justify-center">
+                      <Lock className="w-8 h-8 text-background/80" />
+                    </div>
+                    <div className="absolute top-2 right-2">
+                      <Badge variant="outline" className="text-[10px] capitalize backdrop-blur-sm bg-background/50">{stage.attributes.rarity}</Badge>
+                    </div>
+                  </div>
+                  <div className="p-3 space-y-1">
+                    <h3 className="font-semibold text-card-foreground text-sm">{stage.name}</h3>
+                    <p className="text-[10px] font-mono text-muted-foreground">Requiere {stage.threshold}+ XLM</p>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Empty state if no donations */}
+        {userDonations.length === 0 && (
+          <Card className="p-8 text-center border-0 shadow-card bg-card/80">
+            <Leaf className="w-12 h-12 mx-auto text-primary/40 mb-4" />
+            <h3 className="text-lg font-semibold text-card-foreground mb-2">Aún no tienes donaciones</h3>
+            <p className="text-muted-foreground mb-4">Dona a una campaña para empezar a coleccionar insignias NFT</p>
+            <Button variant="donate" className="rounded-full" onClick={() => navigate('/')}>
+              <Leaf className="w-4 h-4 mr-2" /> Explorar Campañas
+            </Button>
           </Card>
         )}
 
-        {/* Growth Stages Overview */}
-        <Card className="p-6 shadow-card border-0 bg-card/80 backdrop-blur-sm">
-          <h2 className="text-xl font-bold text-card-foreground mb-4">
-            Etapas de Crecimiento
-          </h2>
-          <div className="space-y-3">
-            {nftStages.map((stage) => {
-              const isUnlocked = currentStage >= stage.id;
-              const isCurrent = currentStage === stage.id;
-
-              return (
-                <div
-                  key={stage.id}
-                  className={`flex items-center gap-4 p-4 rounded-lg border transition-all duration-200 ${
-                    isCurrent
-                      ? 'border-primary/30 bg-primary/5 shadow-soft'
-                      : isUnlocked
-                      ? 'border-border/50 bg-card/50'
-                      : 'border-border/20 bg-muted/30 opacity-60'
-                  }`}
-                >
-                  <img
-                    src={stage.imageUrl}
-                    alt={stage.name}
-                    className="w-14 h-14 rounded-lg object-cover"
-                    loading="lazy"
-                  />
-                  <div
-                    className={`p-2 rounded-full text-white ${stage.color} ${
-                      isUnlocked ? 'opacity-100' : 'opacity-40'
-                    }`}
-                  >
-                    {stageIcons[stage.id]}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-card-foreground">
-                      {stage.name}
-                    </h3>
-                    <p className="text-sm text-muted-foreground truncate">
-                      {stage.description}
-                    </p>
-                    <div className="flex gap-2 mt-1">
-                      <Badge variant="outline" className="text-xs capitalize">
-                        {stage.attributes.rarity}
-                      </Badge>
+        {/* Recent Donations */}
+        {userDonations.length > 0 && (
+          <Card className="border-0 shadow-card bg-card/80">
+            <CardHeader><CardTitle className="text-card-foreground">Historial de Donaciones</CardTitle></CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {userDonations.slice().reverse().slice(0, 10).map(d => (
+                  <div key={d.id} className="flex items-center justify-between p-3 rounded-xl bg-muted/50">
+                    <div className="space-y-0.5">
+                      <p className="text-sm font-medium text-card-foreground">${d.amountMXN.toFixed(0)} MXN</p>
+                      <p className="text-[11px] text-muted-foreground">{new Date(d.timestamp).toLocaleDateString('es-MX')}</p>
                     </div>
+                    <a
+                      href={`https://stellar.expert/explorer/testnet/tx/${d.transactionHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-primary text-xs hover:underline"
+                    >
+                      <span className="font-mono">{d.transactionHash.slice(0, 10)}...</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className="font-medium text-card-foreground">
-                      ${stage.threshold}+
-                    </p>
-                    {isUnlocked && (
-                      <span className="text-xs text-primary font-medium">
-                        ✓ Desbloqueado
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
