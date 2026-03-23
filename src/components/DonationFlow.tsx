@@ -6,22 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
-import { TreePine, Heart, DollarSign, Shield, Star, Info, CheckCircle, Wallet, ExternalLink } from "lucide-react";
+import { Leaf, Heart, DollarSign, Shield, Star, Info, CheckCircle, Wallet, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useStellarWallet } from "@/hooks/use-stellar-wallet";
 import { useCampaigns } from "@/context/CampaignContext";
 import { sendDonationPayment } from "@/lib/stellar/soroban";
 import { STELLAR_CONFIG } from "@/lib/stellar/config";
+import { nftStages, getStageForXLM, getNextStageForXLM } from "@/lib/stellar/nft-stages";
 import { toast } from "@/components/ui/sonner";
-
-interface TreeStage {
-  name: string;
-  minPesos: number;
-  maxPesos: number;
-  icon: string;
-  description: string;
-}
 
 export const DonationFlow = () => {
   const { campaignId } = useParams<{ campaignId: string }>();
@@ -57,28 +50,14 @@ export const DonationFlow = () => {
   const netPesoAmount = netXlmAmount * pesoRate;
   const progressPercent = Math.round((campaign.raisedAmount / campaign.goalAmount) * 100);
 
-  const treeStages: TreeStage[] = [
-    { name: "Semilla", minPesos: 0, maxPesos: 499, icon: "🌱", description: "Comenzando tu árbol de generosidad" },
-    { name: "Brote", minPesos: 500, maxPesos: 1499, icon: "🌿", description: "Tu generosidad está creciendo" },
-    { name: "Plántula", minPesos: 1500, maxPesos: 4999, icon: "🌲", description: "Un árbol joven de esperanza" },
-    { name: "Árbol Joven", minPesos: 5000, maxPesos: 9999, icon: "🌳", description: "Tu impacto es notable" },
-    { name: "Árbol Maduro", minPesos: 10000, maxPesos: 24999, icon: "🌲", description: "Generosidad establecida" },
-    { name: "Árbol Poderoso", minPesos: 25000, maxPesos: Infinity, icon: "🌲", description: "Máximo nivel de impacto" }
-  ];
-
-  const getCurrentTreeStage = (totalPesos: number) =>
-    treeStages.find(s => totalPesos >= s.minPesos && totalPesos <= s.maxPesos) || treeStages[0];
-
-  const getNextTreeStage = (totalPesos: number) => {
-    const idx = treeStages.findIndex(s => totalPesos >= s.minPesos && totalPesos <= s.maxPesos);
-    return idx < treeStages.length - 1 ? treeStages[idx + 1] : null;
-  };
-
-  const userTotalDonated = wallet ? getTotalDonatedByUser(wallet.address) : 0;
-  const newTotal = userTotalDonated + netPesoAmount;
-  const currentStage = getCurrentTreeStage(userTotalDonated);
-  const newStage = getCurrentTreeStage(newTotal);
-  const nextStage = getNextTreeStage(newTotal);
+  // Use XLM-based totals to match NFT stage thresholds
+  const userTotalDonatedXLM = wallet ? getTotalDonatedByUser(wallet.address) / pesoRate : 0;
+  const newTotalXLM = userTotalDonatedXLM + netXlmAmount;
+  const userTotalDonatedMXN = wallet ? getTotalDonatedByUser(wallet.address) : 0;
+  const newTotalMXN = userTotalDonatedMXN + netPesoAmount;
+  const currentStage = getStageForXLM(userTotalDonatedXLM);
+  const newStage = getStageForXLM(newTotalXLM);
+  const nextStage = getNextStageForXLM(newTotalXLM);
 
   const formatPesos = (amount: number) =>
     new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0 }).format(amount);
@@ -299,61 +278,83 @@ export const DonationFlow = () => {
             <Card className="shadow-card border-0">
               <CardHeader>
                 <CardTitle className="flex items-center text-card-foreground">
-                  <TreePine className="w-5 h-5 mr-2" /> Tu Árbol de Generosidad
+                  <Leaf className="w-5 h-5 mr-2 text-primary" /> Tu Árbol de Generosidad
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="text-center p-6 bg-muted rounded-lg">
-                    <div className="text-4xl mb-2">{currentStage.icon}</div>
-                    <h3 className="font-medium text-card-foreground">{currentStage.name}</h3>
+                  {/* Current NFT Stage with real asset */}
+                  <div className="text-center p-6 bg-muted rounded-xl">
+                    <img
+                      src={currentStage.imageUrl}
+                      alt={currentStage.name}
+                      className="w-32 h-32 mx-auto rounded-xl shadow-elegant object-cover mb-3"
+                      loading="lazy"
+                    />
+                    <h3 className="font-semibold text-card-foreground text-lg">{currentStage.name}</h3>
                     <p className="text-sm text-muted-foreground">{currentStage.description}</p>
-                    <div className="text-lg font-bold mt-2 text-card-foreground">{formatPesos(userTotalDonated)} donados</div>
+                    <Badge variant="secondary" className="mt-2 capitalize">{currentStage.attributes.rarity}</Badge>
+                    <div className="text-lg font-bold mt-2 text-card-foreground">{formatPesos(userTotalDonatedMXN)} donados</div>
                   </div>
 
-                  {newStage && newStage !== currentStage && pesoAmount > 0 && (
+                  {/* Stage upgrade alert */}
+                  {newStage && newStage.id !== currentStage.id && pesoAmount > 0 && (
                     <Alert className="border-primary/20 bg-primary/5">
                       <Star className="h-4 w-4 text-primary" />
-                      <AlertDescription className="text-muted-foreground">
-                        ¡Esta donación elevará tu árbol a: <strong className="text-card-foreground">{newStage.name} {newStage.icon}</strong>
+                      <AlertDescription className="flex items-center gap-3 text-muted-foreground">
+                        <img src={newStage.imageUrl} alt={newStage.name} className="w-10 h-10 rounded-lg object-cover" />
+                        <span>¡Esta donación elevará tu árbol a: <strong className="text-card-foreground">{newStage.name}</strong></span>
                       </AlertDescription>
                     </Alert>
                   )}
 
+                  {/* Progress to next stage */}
                   {nextStage && (
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Progreso a {nextStage.name}</span>
-                        <span className="text-card-foreground font-medium">{formatPesos(newTotal)} / {formatPesos(nextStage.minPesos)}</span>
+                        <span className="text-card-foreground font-medium">{newTotalXLM.toFixed(1)} / {nextStage.threshold} XLM</span>
                       </div>
-                      <Progress value={Math.min((newTotal / nextStage.minPesos) * 100, 100)} className="h-2" />
+                      <Progress value={Math.min((newTotalXLM / nextStage.threshold) * 100, 100)} className="h-2" />
                     </div>
                   )}
 
+                  {/* All stages with real NFT images */}
                   <div className="space-y-2">
-                    <h4 className="font-medium text-card-foreground">Etapas del Árbol</h4>
-                    {treeStages.map((stage, index) => (
-                      <div key={index} className={`flex items-center justify-between p-2 rounded-lg ${
-                        newTotal >= stage.minPesos && newTotal <= stage.maxPesos
-                          ? 'bg-primary/10 border border-primary/20'
-                          : userTotalDonated >= stage.minPesos && userTotalDonated <= stage.maxPesos
-                          ? 'bg-muted border border-border/50'
-                          : 'opacity-50 bg-muted/30'
-                      }`}>
-                        <div className="flex items-center space-x-3">
-                          <span className="text-lg">{stage.icon}</span>
-                          <div>
-                            <div className="text-sm font-medium text-card-foreground">{stage.name}</div>
-                            <div className="text-xs text-muted-foreground">
-                              {formatPesos(stage.minPesos)}{stage.maxPesos !== Infinity ? ` - ${formatPesos(stage.maxPesos)}` : '+'}
+                    <h4 className="font-medium text-card-foreground">Etapas de Crecimiento</h4>
+                    {nftStages.map((stage) => {
+                      const isCurrentNew = newTotalXLM >= stage.threshold && (stage.id === nftStages.length - 1 || newTotalXLM < (nftStages[stage.id + 1]?.threshold ?? Infinity));
+                      const isCurrentExisting = userTotalDonatedXLM >= stage.threshold && (stage.id === nftStages.length - 1 || userTotalDonatedXLM < (nftStages[stage.id + 1]?.threshold ?? Infinity));
+                      const isUnlocked = newTotalXLM >= stage.threshold;
+
+                      return (
+                        <div key={stage.id} className={`flex items-center justify-between p-2.5 rounded-xl transition-all ${
+                          isCurrentNew
+                            ? 'bg-primary/10 border border-primary/20'
+                            : isCurrentExisting
+                            ? 'bg-muted border border-border/50'
+                            : isUnlocked
+                            ? 'bg-muted/50'
+                            : 'opacity-40 bg-muted/20'
+                        }`}>
+                          <div className="flex items-center space-x-3">
+                            <img
+                              src={stage.imageUrl}
+                              alt={stage.name}
+                              className={`w-9 h-9 rounded-lg object-cover ${!isUnlocked ? 'grayscale' : ''}`}
+                              loading="lazy"
+                            />
+                            <div>
+                              <div className="text-sm font-medium text-card-foreground">{stage.name}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {stage.threshold} XLM{stage.id < nftStages.length - 1 ? ` — ${nftStages[stage.id + 1].threshold} XLM` : '+'}
+                              </div>
                             </div>
                           </div>
+                          {isCurrentNew && <CheckCircle className="w-4 h-4 text-primary" />}
                         </div>
-                        {newTotal >= stage.minPesos && newTotal <= stage.maxPesos && (
-                          <CheckCircle className="w-4 h-4 text-primary" />
-                        )}
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               </CardContent>
