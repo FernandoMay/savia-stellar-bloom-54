@@ -12,6 +12,12 @@ import CreateCampaign from "./pages/CreateCampaign";
 import Donation from "./pages/Donation";
 import KYCPage from "./pages/KYCPage";
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
+
 const queryClient = new QueryClient();
 
 const App = () => (
