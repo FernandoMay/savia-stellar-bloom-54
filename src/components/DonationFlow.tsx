@@ -50,28 +50,14 @@ export const DonationFlow = () => {
   const netPesoAmount = netXlmAmount * pesoRate;
   const progressPercent = Math.round((campaign.raisedAmount / campaign.goalAmount) * 100);
 
-  const treeStages: TreeStage[] = [
-    { name: "Semilla", minPesos: 0, maxPesos: 499, icon: "🌱", description: "Comenzando tu árbol de generosidad" },
-    { name: "Brote", minPesos: 500, maxPesos: 1499, icon: "🌿", description: "Tu generosidad está creciendo" },
-    { name: "Plántula", minPesos: 1500, maxPesos: 4999, icon: "🌲", description: "Un árbol joven de esperanza" },
-    { name: "Árbol Joven", minPesos: 5000, maxPesos: 9999, icon: "🌳", description: "Tu impacto es notable" },
-    { name: "Árbol Maduro", minPesos: 10000, maxPesos: 24999, icon: "🌲", description: "Generosidad establecida" },
-    { name: "Árbol Poderoso", minPesos: 25000, maxPesos: Infinity, icon: "🌲", description: "Máximo nivel de impacto" }
-  ];
-
-  const getCurrentTreeStage = (totalPesos: number) =>
-    treeStages.find(s => totalPesos >= s.minPesos && totalPesos <= s.maxPesos) || treeStages[0];
-
-  const getNextTreeStage = (totalPesos: number) => {
-    const idx = treeStages.findIndex(s => totalPesos >= s.minPesos && totalPesos <= s.maxPesos);
-    return idx < treeStages.length - 1 ? treeStages[idx + 1] : null;
-  };
-
-  const userTotalDonated = wallet ? getTotalDonatedByUser(wallet.address) : 0;
-  const newTotal = userTotalDonated + netPesoAmount;
-  const currentStage = getCurrentTreeStage(userTotalDonated);
-  const newStage = getCurrentTreeStage(newTotal);
-  const nextStage = getNextTreeStage(newTotal);
+  // Use XLM-based totals to match NFT stage thresholds
+  const userTotalDonatedXLM = wallet ? getTotalDonatedByUser(wallet.address) / pesoRate : 0;
+  const newTotalXLM = userTotalDonatedXLM + netXlmAmount;
+  const userTotalDonatedMXN = wallet ? getTotalDonatedByUser(wallet.address) : 0;
+  const newTotalMXN = userTotalDonatedMXN + netPesoAmount;
+  const currentStage = getStageForXLM(userTotalDonatedXLM);
+  const newStage = getStageForXLM(newTotalXLM);
+  const nextStage = getNextStageForXLM(newTotalXLM);
 
   const formatPesos = (amount: number) =>
     new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0 }).format(amount);
