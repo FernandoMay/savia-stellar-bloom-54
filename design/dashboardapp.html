@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Savia | Your Impact Garden</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Hanken+Grotesk:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Newsreader:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#f9f9ff",
+                    "secondary-fixed": "#b0edf5",
+                    "surface-container-high": "#dee8ff",
+                    "surface-dim": "#cfdaf1",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed-variant": "#872017",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#ebf1ff",
+                    "surface-variant": "#d8e3fa",
+                    "growth-green": "#8bc34a",
+                    "surface-container-highest": "#d8e3fa",
+                    "on-surface": "#111c2c",
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#b0edf5",
+                    "tertiary": "#576061",
+                    "on-secondary-container": "#306d74",
+                    "surface-bright": "#f9f9ff",
+                    "on-primary": "#ffffff",
+                    "outline": "#8b716d",
+                    "tertiary-container": "#919a9b",
+                    "surface-warm": "#fffcfb",
+                    "primary": "#a8372b",
+                    "on-tertiary-container": "#293233",
+                    "inverse-surface": "#263142",
+                    "surface": "#f9f9ff",
+                    "on-secondary-fixed": "#001f23",
+                    "stardust-white": "#ffffff",
+                    "secondary-fixed-dim": "#95d0d9",
+                    "surface-container-low": "#f0f3ff",
+                    "outline-variant": "#dfbfbb",
+                    "on-secondary-fixed-variant": "#044f56",
+                    "primary-container": "#f46f5e",
+                    "surface-container": "#e7eeff",
+                    "inverse-primary": "#ffb4a9",
+                    "tertiary-fixed-dim": "#bfc8c9",
+                    "on-surface-variant": "#58413e",
+                    "primary-fixed": "#ffdad5",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#dbe4e5",
+                    "surface-tint": "#a8372b",
+                    "on-tertiary-fixed": "#151d1e",
+                    "on-background": "#111c2c",
+                    "on-tertiary-fixed-variant": "#404849",
+                    "on-primary-container": "#670504",
+                    "primary-fixed-dim": "#ffb4a9",
+                    "secondary": "#29676e",
+                    "on-primary-fixed": "#410000",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "16px",
+                    "base": "8px",
+                    "section-gap": "40px",
+                    "container-margin": "20px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Newsreader"],
+                    "body-md": ["Hanken Grotesk"],
+                    "headline-md": ["Newsreader"],
+                    "label-md": ["Hanken Grotesk"],
+                    "label-sm": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "headline-lg-mobile": ["Newsreader"],
+                    "display-lg": ["Newsreader"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      body {
+        font-family: 'Hanken Grotesk', sans-serif;
+        background-color: #f9f9ff;
+        color: #111c2c;
+      }
+      .font-headline { font-family: 'Newsreader', serif; }
+      
+      .impact-glow {
+        box-shadow: 0 0 40px rgba(168, 55, 43, 0.15);
+      }
+      
+      .glass-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+
+      .progress-bar-gradient {
+        background: linear-gradient(90deg, #29676e 0%, #a8372b 100%);
+      }
+
+      .organic-pattern {
+        background-image: radial-gradient(circle at 2px 2px, rgba(168, 55, 43, 0.05) 1px, transparent 0);
+        background-size: 24px 24px;
+      }
+
+      .thumb-zone {
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen organic-pattern">
+<!-- TopAppBar -->
+<header class="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b border-outline-variant/30">
+<div class="flex justify-between items-center w-full px-container-margin max-w-7xl mx-auto h-16">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">Savia</span>
+</div>
+<nav class="hidden md:flex gap-8">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Explore</a>
+<a class="font-label-md text-label-md text-primary font-bold border-b-2 border-primary" href="#">Dashboard</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Create</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Impact</a>
+</nav>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md hover:scale-95 transition-transform">
+                GD7S...8K2L
+            </button>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-container-margin py-base md:py-section-gap mb-24">
+<!-- Hero Section: Impact Garden -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-section-gap">
+<div class="lg:col-span-8">
+<div class="relative overflow-hidden rounded-3xl bg-surface-container-low p-base md:p-8 flex flex-col items-center justify-center min-h-[450px] impact-glow">
+<!-- Background Decoration -->
+<div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+<div class="absolute top-10 left-10 w-32 h-32 border border-primary rounded-full animate-pulse"></div>
+<div class="absolute bottom-20 right-20 w-64 h-64 border border-secondary rounded-full animate-ping" style="animation-duration: 4s"></div>
+</div>
+<div class="z-10 text-center mb-8">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Your Impact Garden</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Stage 3: Bloom Stage</p>
+</div>
+<!-- NFT Growth Indicator -->
+<div class="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
+<div class="absolute inset-0 bg-secondary-container/30 rounded-full blur-3xl"></div>
+<img class="relative z-20 w-full h-full object-contain hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A surreal digital painting of a floating organic sphere representing an NFT evolution stage. The sphere is a vibrant terracotta orange, textured with mossy growth, suspended against a turquoise circular sky backdrop. Surrounding the sphere are tufts of stylized prairie grass and miniature landscapes. The style is soft, nurturing, and high-modern with clean lines and a sense of calm vitality, matching a medical-environmental crowdfunding aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChYcDZ-JmYMGlvuqplTaSCJSjeXV8pfaxgPpm91t_vtiMgTPJfOJuoFJbI7RvPQwC00Ugc3dRf-vNhs9yPKdthUjDO5ubBczghJr-nqUwlR18lM3Cso3usHznkLtiDyKaS6rX4HvKCjbSc_tK6JcuRiuVd2FjEprpcuIXT-2rIyCw762YcCtGsXUTxKF_QzEPBBZmurJRuWXbQwzr7J8USITrMCntpQDsca7MSOcSHUA_JHuJlk39WJCtaCOIrqCfE-j1ty9O3IKuG"/>
+</div>
+<div class="mt-8 w-full max-w-md px-4">
+<div class="flex justify-between items-end mb-2">
+<span class="font-label-md text-label-md text-secondary">Next: Blossom</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">25 XLM to go</span>
+</div>
+<div class="h-3 w-full bg-tertiary-container/20 rounded-full overflow-hidden">
+<div class="h-full w-3/4 progress-bar-gradient rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Wallet & Profile Sidebar -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Wallet Card -->
+<div class="glass-card rounded-3xl p-6 border border-outline-variant/20 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container">account_balance_wallet</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Freighter Wallet</span>
+</div>
+<span class="text-xs text-growth-green font-bold px-2 py-1 bg-growth-green/10 rounded-lg">Connected</span>
+</div>
+<div class="mb-6">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Current Balance</p>
+<h2 class="font-headline-lg text-headline-lg text-primary">1,240.50 XLM</h2>
+<p class="text-xs text-on-surface-variant/60">≈ $138.45 USD</p>
+</div>
+<button class="w-full py-3 rounded-xl border-2 border-secondary text-secondary font-label-md text-label-md hover:bg-secondary hover:text-on-secondary transition-all">
+                        Add Funds
+                    </button>
+</div>
+<!-- Profile Card -->
+<div class="glass-card rounded-3xl p-6 border border-outline-variant/20 shadow-sm flex flex-col items-center text-center">
+<div class="relative w-20 h-20 mb-4">
+<img class="w-full h-full object-cover rounded-full border-2 border-primary p-1" data-alt="A professional and friendly profile portrait of a person in a minimalist, high-key setting. The person has a warm expression, suggesting a nurturing personality. The background is a soft, blurred wash of Savia's brand colors: Teal and Coral. High-quality photography with soft studio lighting, emphasizing transparency and trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaI1b0o-RzLvbzX8zgnP9ZAzxrAkx5GYOgMMMkPhkwlASVdQWRZfXN_kvCqDooK-73ztpetRX1IlgxukIKIhyiqckeBujTpSCLokcNgtBOCb0LT-AnbcmCzIbbNoZrbx_6i8wgV_Mcbjm5auZdpNV9AV8-hLjtSyp5Zg5wUQ7KQxOzjp5Z0qUOVyUdafGfaSqznEPcHykJPahmuT6_ki3il8YCrq2wvDGKXTDjyWJ4v200YX2SH9s92RRGfZyX5aCTKU4VXej6Z8vl"/>
+<div class="absolute bottom-0 right-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center border-2 border-background">
+<span class="material-symbols-outlined text-[12px] text-white" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Alex Rivera</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-4">Cultivator since 2023</p>
+<div class="grid grid-cols-2 gap-4 w-full border-t border-outline-variant/20 pt-4">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Donated</p>
+<p class="font-bold text-primary">450 XLM</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Lives Saved</p>
+<p class="font-bold text-secondary">12</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Activity & Stats: Bento Grid Style -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Recent Donations -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-3xl p-8 border border-outline-variant/10">
+<div class="flex items-center justify-between mb-8">
+<h2 class="font-headline-md text-headline-md text-on-surface">Recent Contributions</h2>
+<button class="text-secondary font-label-md text-label-md flex items-center gap-1">
+                        View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="space-y-4">
+<!-- Donation Item 1 -->
+<div class="flex items-center justify-between p-4 rounded-2xl hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A small, focused thumbnail image of a community medical clinic in a rural area, bathed in warm sunset light. The image feels hopeful and active, showing the tangible impact of medical funding. High resolution, documentary style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRG6SDzCb3q4GNKUJpBwOXDwA1Eq_vtNorTTBaQaHxUzjZMrsmv-v926eKaW6V5GaovZ8A4ooM2N_OKhAI1AlK24gjLvK92brLlHEv4yhYEPd_XEBiYxLmDgucAKN0x3kiF1JGnNj0gMWub9JIFwA4a9-ahcqBgrJGobQI-bjjQlTK3I4o-TTY-N8jmPwwUo4tMNF54tMHto75J-gujseHOj-6w-xhNtifs5pHIcf_Mde5ASBJSupoLS98wAa5Lru2kFT3b4yaj-rs"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Pediatric Care Center Fund</p>
+<p class="text-xs text-on-surface-variant">2 hours ago</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-bold text-primary">+50 XLM</span>
+<a class="text-[10px] text-secondary font-bold uppercase tracking-wider flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity" href="#">
+                                StellarExpert <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- Donation Item 2 -->
+<div class="flex items-center justify-between p-4 rounded-2xl hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close-up of a medical professional's hands holding a digital tablet with growth charts. Clinical yet empathetic atmosphere with soft lighting and professional blue tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf9L6DYoGj2uv_fTPLbdINJ95z6EHfS-pUdg4KQCwK7DmZs0eOstTQ89pMgEdOwAlzD1SfvMaFfpnfnl-r_eG8HeJggmJpZbDs3Qe08Ty1pyZmL6q6dF1Xek9jKiHLCgGGurJDKuVCf36ej-_KWpxpCKLlB1fCpBZUd1ohe0BobNVagkOapIkNqQrkr-3SxvlSvcPuvFwGZheawI0SM7CsXTwVXc1X6tSIxRzXM5U-3lQ8jNxA8XY_phPaiV1jOpfGackA7feDFzfU"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Advanced Oncology Research</p>
+<p class="text-xs text-on-surface-variant">1 day ago</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-bold text-primary">+120 XLM</span>
+<a class="text-[10px] text-secondary font-bold uppercase tracking-wider flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity" href="#">
+                                StellarExpert <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- Donation Item 3 -->
+<div class="flex items-center justify-between p-4 rounded-2xl hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A vibrant, abstract representation of clean water flowing, symbolizing a community well project. Bright teals and crystal clear reflections. Modern, clean, and vital." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaygbVgc8hXF3xO054F0etPCo_d4zmW4EofZnJbHLaiQi8d43z0Byln511pTCd_UIwzwYSev-Po0Az0LJeHCo7jyNppkLCd3wZ1eIeVlQmaj0OWy_jSD20XDw6eO2nCsby0XahItebpLW0cty7otgA285hpX7ZUE7-vejl5h6ROU8Mss2XBGsQeLcL98YrEHEXT29WzsFAz2kdc3TgQO-7SoxAefan1D5Em_XNqnJwKO4-hgmWoh6kb7n3CZVENf0R6na_o2p0YEbt"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Clean Water For All Village</p>
+<p class="text-xs text-on-surface-variant">3 days ago</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-bold text-primary">+25 XLM</span>
+<a class="text-[10px] text-secondary font-bold uppercase tracking-wider flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity" href="#">
+                                StellarExpert <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Impact Badge / Quick Action -->
+<div class="bg-primary text-on-primary rounded-3xl p-8 flex flex-col justify-between overflow-hidden relative">
+<div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+<div>
+<span class="material-symbols-outlined text-4xl mb-4">volunteer_activism</span>
+<h2 class="font-headline-md text-headline-md mb-2">Ready to Grow?</h2>
+<p class="font-body-md text-body-md opacity-90 mb-8">Your next donation will evolve your NFT to the 'Blossom' stage, unlocking new perks.</p>
+</div>
+<button class="bg-white text-primary w-full py-4 rounded-2xl font-bold font-label-md text-label-md hover:shadow-lg transition-all active:scale-95">
+                    Find New Campaign
+                </button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-section-gap px-container-margin mt-section-gap flex flex-col md:flex-row justify-between items-center gap-base text-center md:text-left bg-surface-container-low border-t border-outline-variant/20">
+<div class="flex flex-col gap-2">
+<span class="font-headline-md text-headline-md text-primary font-bold">Savia</span>
+<p class="font-body-md text-body-md text-on-surface-variant/80 max-w-md">© 2024 Savia. Built on Stellar. Cultivating health through communal growth.</p>
+</div>
+<div class="flex gap-6">
+<a class="font-label-sm text-label-sm text-on-surface-variant/80 hover:text-primary transition-all" href="#">Campaigns</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant/80 hover:text-primary transition-all" href="#">Evolution Stages</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant/80 hover:text-primary transition-all" href="#">Whitepaper</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant/80 hover:text-primary transition-all" href="#">Terms</a>
+</div>
+</footer>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-surface-container shadow-[0_-4px_20px_rgba(168,55,43,0.04)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-sm text-label-sm">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1 scale-90" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">potted_plant</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-sm text-label-sm">Create</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">volunteer_activism</span>
+<span class="font-label-sm text-label-sm">Impact</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for the NFT image hover
+        const nftContainer = document.querySelector('.impact-glow img');
+        if(nftContainer) {
+            nftContainer.addEventListener('mousemove', (e) => {
+                const rect = nftContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const xc = rect.width / 2;
+                const yc = rect.height / 2;
+                const dx = x - xc;
+                const dy = y - yc;
+                nftContainer.style.transform = `perspective(1000px) rotateY(${dx / 15}deg) rotateX(${-dy / 15}deg) scale(1.05)`;
+            });
+
+            nftContainer.addEventListener('mouseleave', () => {
+                nftContainer.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+        }
+    </script>
+</body></html>

@@ -5,6 +5,7 @@ import {
   fundWithFriendbot,
 } from '@/lib/stellar/wallet';
 import { getXLMBalance } from '@/lib/stellar/soroban';
+import { STELLAR_CONFIG } from '@/lib/stellar/config';
 import type { WalletInfo } from '@/lib/stellar/types';
 import { toast } from '@/components/ui/sonner';
 
@@ -16,10 +17,8 @@ export function useStellarWallet() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isFreighterAvailable, setIsFreighterAvailable] = useState(false);
 
-  // Check Freighter availability on mount
   useEffect(() => {
     const check = async () => {
-      // Give extension time to inject
       await new Promise((r) => setTimeout(r, 500));
       const installed = await isFreighterInstalled();
       setIsFreighterAvailable(installed);
@@ -27,7 +26,6 @@ export function useStellarWallet() {
     check();
   }, []);
 
-  // Auto-reconnect from storage
   useEffect(() => {
     const stored = localStorage.getItem(WALLET_STORAGE_KEY);
     if (stored) {
@@ -54,11 +52,9 @@ export function useStellarWallet() {
       setWallet(walletInfo);
       localStorage.setItem(WALLET_STORAGE_KEY, JSON.stringify(walletInfo));
 
-      // Fetch balance
       const bal = await refreshBalance(walletInfo.address);
 
-      // If zero balance on testnet, fund with friendbot
-      if (parseFloat(bal) === 0) {
+      if (STELLAR_CONFIG.NETWORK === 'testnet' && parseFloat(bal) === 0) {
         toast.info('Financiando cuenta en testnet...');
         const funded = await fundWithFriendbot(walletInfo.address);
         if (funded) {
